@@ -1,0 +1,18 @@
+{
+  "name": "cloud-file-manager",
+  "version": "1.0.0",
+  "description": "Cloud File Manager — Aplikasi web untuk mengelola file di MinIO (Tugas Komputasi Awan)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "minio": "^8.0.5",
+    "multer": "^1.4.5-lts.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

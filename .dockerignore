@@ -1,0 +1,32 @@
+# Dependency & build artifacts
+node_modules
+npm-debug.log*
+
+# Git
+.git
+.gitignore
+
+# Environment (jangan bake kredensial ke image!)
+.env
+.env.*
+!.env.example
+
+# Dokumentasi & file dev
+README.md
+LICENSE
+*.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker (hindari recursive copy)
+Dockerfile
+docker-compose*.yml
+.dockerignore

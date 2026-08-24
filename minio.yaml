@@ -1,0 +1,96 @@
+---
+# GANTI password di bawah sebelum apply. Minimal 8 karakter.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-creds
+type: Opaque
+stringData:
+  MINIO_ROOT_USER: minioadmin
+  MINIO_ROOT_PASSWORD: GantiPasswordIniYaBro123
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-data
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: local-path   # storageclass bawaan k3s/k3d
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  labels:
+    app: minio
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate          # PVC RWO: pod lama harus mati dulu
+  selector:
+    matchLabels:
+      app: minio
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        # Rilis April 2025 dipin: versi setelahnya memangkas fitur admin
+        # dari web console pada Community Edition.
+        image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
+        args:
+        - server
+        - /data
+        - --console-address
+        - ":9001"
+        envFrom:
+        - secretRef:
+            name: minio-creds
+        env:
+        # GANTI ke subdomain console kamu, supaya redirect login tidak nyasar
+        - name: MINIO_BROWSER_REDIRECT_URL
+          value: "https://minio.willyrafael.my.id"
+        ports:
+        - name: api
+          containerPort: 9000
+        - name: console
+          containerPort: 9001
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        readinessProbe:
+          httpGet:
+            path: /minio/health/ready
+            port: 9000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: minio-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+spec:
+  type: ClusterIP
+  selector:
+    app: minio
+  ports:
+  - name: api
+    port: 9000
+    targetPort: 9000
+  - name: console
+    port: 9001
+    targetPort: 9001

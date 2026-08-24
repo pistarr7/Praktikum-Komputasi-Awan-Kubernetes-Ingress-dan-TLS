@@ -1,0 +1,47 @@
+# =============================================================
+# Cloud File Manager — Docker Compose (Testing Lokal)
+# Menjalankan app + MinIO dalam satu perintah
+# =============================================================
+
+services:
+  # ---- MinIO Object Storage ----
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-04-22T22-12-26Z
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"   # MinIO API
+      - "9001:9001"   # MinIO Console (web UI)
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      # Cek apakah MinIO API sudah siap menerima request
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+
+  # ---- Cloud File Manager App ----
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      MINIO_ENDPOINT: minio          # nama service Compose = hostname
+      MINIO_PORT: 9000
+      MINIO_USE_SSL: "false"
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: tugas3
+    depends_on:
+      minio:
+        condition: service_healthy   # tunggu MinIO benar-benar siap
+
+volumes:
+  minio-data:

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cloud File Manager — Aplikasi manajemen file cloud berbasis MinIO untuk tugas Komputasi Awan">
+  <title>Cloud File Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="8" fill="url(#logo-grad)"/>
+            <path d="M10 16.5C10 14.015 12.015 12 14.5 12H17.5C19.985 12 22 14.015 22 16.5C22 18.985 19.985 21 17.5 21H14.5C12.015 21 10 18.985 10 16.5Z" stroke="white" stroke-width="1.5"/>
+            <path d="M14 11V9M18 11V9M12 14H10M22 14H20M13 20L11.5 22M19 20L20.5 22" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="logo-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1"/>
+                <stop offset="1" stop-color="#8b5cf6"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <h1>Cloud File Manager</h1>
+          <p class="subtitle">Nama: Willy Rafael F. Silalahi / NIM: 23083000168</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-text" id="statusText">Memeriksa...</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main">
+
+    <!-- Upload Section -->
+    <section class="card upload-section">
+      <h2 class="card-title">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 4V13M10 4L6 8M10 4L14 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 14V15C3 16.1046 3.89543 17 5 17H15C16.1046 17 17 16.1046 17 15V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Upload File
+      </h2>
+
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-content">
+          <svg class="drop-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+            <circle cx="24" cy="24" r="23" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
+            <path d="M24 16V30M24 16L18 22M24 16L30 22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p class="drop-text">Seret & lepas file di sini</p>
+          <p class="drop-subtext">atau</p>
+          <label class="btn btn-primary" for="fileInput">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 10V12C2 13.1046 2.89543 14 4 14H12C13.1046 14 14 13.1046 14 12V10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M8 2V10M8 2L5 5M8 2L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Pilih File
+          </label>
+          <input type="file" id="fileInput" hidden>
+          <p class="drop-limit">Maks. 50 MB per file</p>
+        </div>
+      </div>
+
+      <!-- Progress Bar (hidden by default) -->
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-info">
+          <span class="progress-filename" id="progressFilename">-</span>
+          <span class="progress-percent" id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="progress-status" id="progressStatus">Mengupload...</p>
+      </div>
+    </section>
+
+    <!-- File List Section -->
+    <section class="card files-section">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5C3 3.89543 3.89543 3 5 3H7.58579C8.11622 3 8.62493 3.21071 9 3.58579L10 4.58579C10.3751 4.96086 10.8838 5.17157 11.4142 5.17157H15C16.1046 5.17157 17 6.067 17 7.17157V15C17 16.1046 16.1046 17 15 17H5C3.89543 17 3 16.1046 3 15V5Z" stroke="currentColor" stroke-width="1.5"/></svg>
+          File di Bucket
+        </h2>
+        <button class="btn btn-ghost" id="refreshBtn" title="Refresh">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.65 2.35A8 8 0 1 0 15 8h-2a6 6 0 1 1-1.76-4.24L9 6h6V0l-1.35 2.35Z" fill="currentColor"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- File Table -->
+      <div class="table-wrapper" id="tableWrapper">
+        <table class="file-table" id="fileTable">
+          <thead>
+            <tr>
+              <th>Preview</th>
+              <th>Nama File</th>
+              <th>Ukuran</th>
+              <th>Tanggal Upload</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="fileTableBody">
+            <!-- Diisi oleh JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState">
+        <svg class="empty-icon" width="80" height="80" viewBox="0 0 80 80" fill="none">
+          <rect x="15" y="20" width="50" height="45" rx="4" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          <path d="M15 35H65" stroke="currentColor" stroke-width="1.5" opacity="0.2"/>
+          <path d="M30 28H50" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+          <circle cx="40" cy="50" r="8" stroke="currentColor" stroke-width="1.5" opacity="0.3"/>
+          <path d="M40 46V54M36 50H44" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+        </svg>
+        <p class="empty-title">Bucket masih kosong</p>
+        <p class="empty-subtitle">Upload file pertama kamu menggunakan form di atas</p>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" id="loadingState">
+        <div class="spinner"></div>
+        <p>Memuat daftar file...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <p>Cloud File Manager &mdash; Tugas Praktikum Komputasi Awan &copy; 2025</p>
+  </footer>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
